@@ -10,6 +10,28 @@ A **lightweight and efficient** Python library for comparing two dictionaries an
 - **Flexible type checking** (`strict_type_checking=False` to treat `1` and `"1"` as equal).
 - Works with **lists of dictionaries**, automatically matching elements by `"id"`.
 - **Apply a diff** to update a dictionary with changes.
+- 🚀 **43x faster than `deepdiff` while using the same memory!** (see benchmark below)
+
+---
+
+## **⚡ Performance Benchmark**
+
+We compared `compare_dicts_lib` against `deepdiff` over **1000 iterations**:
+
+| Library              | Execution Time (1000 runs) | Memory Usage |
+|----------------------|--------------------------|--------------|
+| **compare_dicts_lib** | **1.54 sec**              | **85.97 MiB** |
+| `deepdiff`          | **66.86 sec**             | **85.97 MiB** |
+
+📌 **`compare_dicts_lib` is ~43x faster than `deepdiff` while using the same memory!** 🚀  
+
+### 📊 **Performance Graph**
+![Benchmark Results](https://raw.githubusercontent.com/SuperGabian/compare_dicts_lib/main/benchmark.png)
+
+💡 **Need a high-performance dictionary comparison tool?**  
+✅ **Faster execution**  
+✅ **Lightweight & easy to use**  
+✅ **Perfect for API responses, JSON diffs, and change tracking**
 
 ---
 
