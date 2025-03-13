@@ -146,6 +146,44 @@ print(diff)
 
 ---
 
+### **🔄 Detecting Order Changes in Lists (`detect_order_changes=True`)**
+By default, `compare_dicts` will detect **when the order of elements in a list has changed**.
+
+```python
+from compare_dicts_lib import compare_dicts
+
+old_data = {"numbers": [1, 2, 3]}
+new_data = {"numbers": [3, 1, 2]}
+
+diff = compare_dicts(new_data, old_data, detailed=True)
+print(diff)
+```
+**Output:**
+```json
+{
+    "numbers": {
+        "modified": [
+            {
+                "type": "reordered",
+                "old_value": [1, 2, 3],
+                "new_value": [3, 1, 2]
+            }
+        ]
+    }
+}
+```
+If you want to ignore order changes, set detect_order_changes=False:
+```python
+diff = compare_dicts(new_data, old_data, detailed=True, detect_order_changes=False)
+print(diff)
+```
+**Output:**
+```json
+{}
+```
+
+---
+
 ## **🛠️ Applying a Diff (`apply_diff`)**
 ### **Basic Usage**
 ```python

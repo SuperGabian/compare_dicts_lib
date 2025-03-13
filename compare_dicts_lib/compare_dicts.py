@@ -4,7 +4,8 @@ def compare_dicts(content: Dict[str, Any],
                   previous_content: Optional[Dict[str, Any]],
                   detailed: bool = False,
                   ignore_keys: Optional[list] = None,
-                  strict_type_checking: bool = True) -> Dict[str, Any]:
+                  strict_type_checking: bool = True,
+                  detect_order_changes: bool = True) -> Dict[str, Any]:
     """
     Compare two dictionaries and returns only the differences.
     If a key is removed, it is assigned None.
@@ -18,6 +19,7 @@ def compare_dicts(content: Dict[str, Any],
         ignore_keys (list, optional): A list of keys to ignore.
         strict_type_checking (bool): If False, compares values as strings (e.g., 1 == "1").
         compare_lists (bool): If True, compares lists item by item.
+        detect_order_changes (bool): If True, detects order changes in lists.
 
     Returns:
         dict: The differences between the two dictionaries.
@@ -33,9 +35,18 @@ def compare_dicts(content: Dict[str, Any],
 
     match_key = "id" if detailed else None
 
-    def compare_lists(new_list: List[Any], old_list: List[Any]) -> Dict[str, Any]:
+    def compare_lists(new_list: List[Any], old_list: List[Any], detect_order_changes: bool = True) -> Dict[str, Any]:
         """Compare two lists and return the differences."""
-        if match_key:
+        added, removed, modified = [], [], []
+        # For lists of int, str, etc.
+        if not all(isinstance(item, dict) for item in new_list + old_list):
+            added = [item for item in new_list if item not in old_list]
+            removed = [item for item in old_list if item not in new_list]
+            if detect_order_changes and new_list != old_list:
+                modified.append({"type": "reordered", "old_value": old_list, "new_value": new_list})
+    
+        # For lists of dicts
+        elif match_key:
         # Convert lists into dicts keyed by `id`
             old_dict = {item[match_key]: item for item in old_list if match_key in item}
             new_dict = {item[match_key]: item for item in new_list if match_key in item}
@@ -82,7 +93,7 @@ def compare_dicts(content: Dict[str, Any],
                 differences[key] = nested_differences
 
         elif isinstance(content[key], list) and isinstance(previous_content.get(key), list):
-            list_diff = compare_lists(content[key], previous_content[key]) if detailed else content[key] if content[key] != previous_content[key] else None
+            list_diff = compare_lists(content[key], previous_content[key], detect_order_changes) if detailed else content[key] if content[key] != previous_content[key] else None
             if list_diff:
                 differences[key] = list_diff
 
